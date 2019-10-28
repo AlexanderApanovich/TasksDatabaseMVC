@@ -18,6 +18,9 @@ namespace TasksDatabase.Models
                 $" password_hash = {PasswordHash}>";         //, trackings = {Trackings}>"
         }
 
+
+
+
         //public SetPassword(string password)
         //{
         //  self.Password_hash = generate_password_hash(password)

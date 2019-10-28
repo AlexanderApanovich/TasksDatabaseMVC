@@ -8,12 +8,16 @@ namespace TasksDatabase.Models
     public class Tracking
     {
         public int Id { get; set; }
-        public Task Task { get; set; }
-        public string Status { get; set; }
-        public User User { get; set; }
         public DateTime Time { get; set; }
         public DateTime StartTime { get; set; }
         public string Comment { get; set; }
+
+        public int StatusId { get; set; }
+        public int TaskId { get; set; }
+        public int UserId { get; set; }
+        public Status Status { get; set; }
+        public Task Task { get; set; }
+        public User User { get; set; }
 
         public override string ToString()
         {

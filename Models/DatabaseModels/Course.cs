@@ -5,14 +5,13 @@ using System.Threading.Tasks;
 
 namespace TasksDatabase.Models
 {
-    public class Task
+    public class Course
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public Course Course { get; set; }
-        public TaskType TaskType { get; set; }
-        public User Developer { get; set; }
-        public User Reviewer { get; set; }
+        public string FullName { get; set; }
 
+        public int DepartmentId { get; set; }
+        public Department Department { get; set; }
     }
 }
