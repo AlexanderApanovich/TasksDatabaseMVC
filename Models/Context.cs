@@ -10,10 +10,10 @@ namespace TasksDatabase
     public class Context : DbContext
     {
         public DbSet<User> Users { get; set; }
-        public DbSet<Block> Trackings { get; set; }
+        public DbSet<Tracking> Trackings { get; set; }
         public DbSet<Course> Courses { get; set; }
         public DbSet<Block> Blocks { get; set; }
-        public DbSet<CourseBlock> CourseBlock { get; set; }
+        public DbSet<CourseBlock> CourseBlocks { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Task> Tasks { get; set; }

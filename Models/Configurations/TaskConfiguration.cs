@@ -11,7 +11,7 @@ namespace TasksDatabase.Models.Configurations
     {
         public void Configure(EntityTypeBuilder<Task> builder)
         {
-            builder.Property(u => u.Name).IsRequired().HasMaxLength(255);
+            builder.Property(t => t.Name).IsRequired().HasMaxLength(255);
         }
     }
 }

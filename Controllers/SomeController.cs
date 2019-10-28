@@ -9,11 +9,11 @@ using TasksDatabase.Models;
 
 namespace TasksDatabase.Controllers
 {
-    public class HomeController : Controller
+    public class LoginController : Controller
     {
         private readonly ILogger<HomeController> _logger;
 
-        public HomeController(ILogger<HomeController> logger)
+        public LoginController(ILogger<HomeController> logger)
         {
             _logger = logger;
         }
@@ -21,18 +21,6 @@ namespace TasksDatabase.Controllers
         public IActionResult Index()
         {
             return View();
-        }
-
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
-
-        [HttpPost]
-        public IActionResult Login(string login, string password, bool remember)
-        {
-            return Content(login+ " " + password + " " + remember);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
