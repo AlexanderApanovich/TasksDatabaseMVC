@@ -2,19 +2,19 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Identity;
 
 namespace TasksDatabase.Models
 {
-    public class User
+    public class User : IdentityUser
     {
-        public int Id { get; set; }
-        public string Name { get; set; }
+        //public new string Id { get; set; }
+        //public string Name { get; set; }
         public bool IsAdmin { get; set; }
-        public string PasswordHash { get; set; }
 
         public override string ToString()
         {
-            return $"<User: id = {Id}, name = {Name}, isAdmin = {IsAdmin}," +
+            return $"<User: id = {Id}, name = {UserName}, isAdmin = {IsAdmin}," +
                 $" password_hash = {PasswordHash}>";         //, trackings = {Trackings}>"
         }
 

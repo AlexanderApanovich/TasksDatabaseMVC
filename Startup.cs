@@ -4,10 +4,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using TasksDatabase.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace TasksDatabase
 {
@@ -23,8 +26,13 @@ namespace TasksDatabase
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
+            services.AddDbContext<DbContext>(options =>
+    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))); //сделать еще один context?
+
+            services.AddIdentity<User, IdentityRole>()
+                .AddEntityFrameworkStores<DbContext>();
             services.AddControllersWithViews();
-            services.AddMvc().AddRazorRuntimeCompilation();
+            services.AddMvc().AddRazorRuntimeCompilation(); //delete
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -45,7 +53,7 @@ namespace TasksDatabase
 
             app.UseRouting();
 
-            app.UseAuthorization();
+            app.UseAuthentication();
 
             app.UseEndpoints(endpoints =>
             {

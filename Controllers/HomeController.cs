@@ -32,7 +32,7 @@ namespace TasksDatabase.Controllers
         [HttpPost]
         public IActionResult Login(string login, string password, bool remember)
         {
-            return Content(login+ " " + password + " " + remember);
+            return View();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
