@@ -17,21 +17,6 @@ namespace TasksDatabase.Models
             return $"<User: id = {Id}, name = {UserName}, isAdmin = {IsAdmin}," +
                 $" password_hash = {PasswordHash}>";         //, trackings = {Trackings}>"
         }
-
-        //public int GetId()
-        //{
-        //    return Id;
-        //}
-
-        //public SetPassword(string password)
-        //{
-        //  self.Password_hash = generate_password_hash(password)
-        //}
-
-        //public CheckPassword(string password):
-        //{
-        //  return check_password_hash(self.Password_hash, password)
-        //}
     }
 }
 

@@ -1,21 +1,13 @@
-﻿@{
+﻿@using Microsoft.AspNetCore.Identity;
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<p class="text-justify"><h2>Добро пожаловать в систему автоматизированной выдачи заданий</h2></p>
-<h5>
-    Пожалуйста, <a asp-area="" asp-controller="Home" asp-action="Login">войдите</a> в систему
-</h5>
+@if (!User.Identity.IsAuthenticated)
+{
+    <p class="text-justify"><h2>Добро пожаловать в систему автоматизированной выдачи заданий</h2></p>
+    <h5>
+        Пожалуйста, <a asp-area="" asp-controller="Account" asp-action="Login">войдите</a> в систему
+    </h5>
+}
 
-@if(User.Identity.IsAuthenticated)
-{
-<p>@User.Identity.Name</p>
-<form method="post" asp-controller="Account" asp-action="LogOff">
-    <input type="submit" value="Выход" />
-</form>
-}
-else
-{
-<a asp-controller="Account" asp-action="Login">Вход</a>
-<a asp-controller="Account" asp-action="Register">Регистрация</a>
-}

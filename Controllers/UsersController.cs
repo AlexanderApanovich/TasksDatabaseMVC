@@ -23,6 +23,11 @@ namespace TasksDatabase.Controllers
         [HttpPost]
         public async Task<IActionResult> Create(CreateUserViewModel model)
         {
+            //var user = await _userManager.GetUserAsync(User);
+            //var email = user.Email;
+
+
+
             if (ModelState.IsValid)
             {
                 User user = new User { UserName = model.UserName, IsAdmin = model.IsAdmin };

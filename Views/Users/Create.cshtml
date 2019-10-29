@@ -2,21 +2,21 @@
 @{
     ViewBag.Title = "Добавление пользователя";
 }
-<form asp-action="Create" asp-controller="Users">
-    <div asp-validation-summary="All" class="text-danger"></div>
-    <div class="form-group">
-        <label asp-for="Name" class="control-label">Email</label>
-        <input type="text" asp-for="Name" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="Password" class="control-label">Пароль</label>
-        <input type="text" asp-for="Password" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="IsAdmin" class="control-label">Год рождения</label>
-        <input type="number" asp-for="IsAdmin" class="form-control" />
-    </div>
-    <div class="form-group">
-        <input type="submit" value="Добавить" class="btn btn-default" />
-    </div>
-</form>
+    <form asp-action="Create" asp-controller="Users">
+        <div asp-validation-summary="All"></div>
+        <div class="form-group">
+            <label asp-for="UserName" class="control-label"></label>
+            <input asp-for="UserName" class="form-control" placeholder="Введите логин" />
+        </div>
+        <div class="form-group">
+            <label asp-for="Password" class="control-label"></label>
+            <input asp-for="Password" class="form-control" />
+        </div>
+        <div class="form-group">
+            <label asp-for="IsAdmin" class="control-label"></label>
+            <input asp-for="IsAdmin" class="form-control" />
+        </div>
+        <div class="form-group">
+            <input type="submit" value="Добавить" class="btn btn-default" />
+        </div>
+    </form>
