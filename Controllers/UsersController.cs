@@ -30,7 +30,7 @@ namespace TasksDatabase.Controllers
 
             if (ModelState.IsValid)
             {
-                User user = new User { UserName = model.UserName, IsAdmin = model.IsAdmin };
+                User user = new User { UserName = model.UserName };
                 var result = await _userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
@@ -54,7 +54,7 @@ namespace TasksDatabase.Controllers
             {
                 return NotFound();
             }
-            EditUserViewModel model = new EditUserViewModel { Id = user.Id, UserName = user.UserName, IsAdmin = user.IsAdmin };
+            EditUserViewModel model = new EditUserViewModel { Id = user.Id, UserName = user.UserName };
             return View(model);
         }
 
@@ -67,7 +67,6 @@ namespace TasksDatabase.Controllers
                 if (user != null)
                 {
                     user.UserName = model.UserName;
-                    user.IsAdmin = model.IsAdmin;
 
                     var result = await _userManager.UpdateAsync(user);
                     if (result.Succeeded)

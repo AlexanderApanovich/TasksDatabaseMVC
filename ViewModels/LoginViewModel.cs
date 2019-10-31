@@ -14,6 +14,7 @@ namespace TasksDatabase.ViewModels
         public string Name { get; set; }
 
         [Required]
+        [DataType(DataType.Password)]
         [Display(Name ="Пароль")]
         public string Password { get; set; }
 

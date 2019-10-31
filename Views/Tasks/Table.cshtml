@@ -1,8 +1,200 @@
-﻿@{
+﻿@using TasksDatabase.Models
+@model IndexViewModel
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<p class="text-justify"><h2>Добро пожаловать в систему автоматизированной выдачи заданий</h2></p>
-<h5>
-    Пожалуйста, <a asp-area="" asp-controller="Home" asp-action="Login">войдите</a> в систему
-</h5>   
+<head>
+    <style type="text/css">
+        .bg-info {
+            color: white;
+            text-shadow: white 0 0 2px;
+        }
+
+        .bg-success {
+            color: white;
+            text-shadow: red 0 0 2px;
+        }
+
+        .decline-accept {
+            position: relative;
+            margin: auto auto;
+            float: left;
+        }
+    </style>
+    <script>
+        var hided = false;
+        function toggle() {
+            var rows = document.getElementsByClassName("bg-success");
+            if (hided) {
+                for (i = 0; i < rows.length; i++)
+                    rows[i].style.display = 'table-row';
+                hided = false;
+            } else {
+                for (i = 0; i < rows.length; i++)
+                    rows[i].style.display = 'none';
+                hided = true;
+            }
+        }</script>
+</head>
+
+<div><button onclick="toggle();" class="btn btn-success">Скрыть/показать завершенные</button></div>
+<br>
+<div><b>Выполнено: @Model.CompletedCount/@Model.TotalCount</b></div>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th scope="col">№</th>
+            <th scope="col">ЭОРД</th>
+            <th scope="col">Задача</th>
+            <th scope="col">Тип работы</th>
+            <th scope="col">Принято</th>
+            <th scope="col">Завершено</th>
+        </tr>
+    </thead>
+    <tbody>
+        @{ int i = 0;}
+        @foreach (var tracking in Model.Trackings)
+        {
+            i++;
+            if (tracking.Status.Name == "Не перенесён" && tracking.Task.DeveloperId == Model.UserId
+                    || tracking.Status.Name == "Не проверен" && tracking.Task.ReviewerId == Model.UserId
+                        || tracking.Status.Name == "Не доработан" && tracking.Task.DeveloperId == Model.UserId)
+            {
+                <tr>
+                    <td>@i</td>
+                    <td>@tracking.Task.Course.Name</td>
+                    <td>@tracking.Task.Name</td>
+                    @switch (tracking.Status.Name)
+                    {
+                        case "Не перенесён":
+                            <td>Перенос</td>
+                            break;
+                        case "Не проверен":
+                            <td>Проверка</td>
+                            break;
+                        case "Не доработан":
+                            <td>Перенос (доработка)</td>
+                            break;
+                    }
+                    @if (Model.CanAcceptTask)
+                    {
+                        <td>
+                            @*исправить!!!!!!*@
+                            <button class="btn btn-primary btn-block" type="button" data-toggle="collapse" data-target="#{{ tracking.Id }}"
+                                    aria-expanded="false" aria-controls="collapseExample">
+                                Принять
+                            </button>
+                            <div class="collapse" id="@tracking.Id">
+                                <div class="card card-body">
+                                    @if (tracking.Comment != null)
+                                    {
+                                        <b>Комментарий к заданию:</b>
+                                        <fieldset disabled>
+                                            <textarea id="disabledTextInput" rows="2" cols="50">@tracking.Comment</textarea>
+                                        </fieldset>
+                                    }
+                                    <b>Назначено: </b>@tracking.Time
+                                    <form method="post" action="">
+                                        <textarea class="form-control" name="comment_accept" id="exampleFormControlTextarea1"
+                                                  placeholder="Введите свой комментарий..." rows="5" cols="5"></textarea>
+                                        <button type="submit" name="Accept" class="btn btn-success" style="float: left;"
+                                                value="@tracking.Id">
+                                            Готово
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                        </td>
+                    }
+                </tr>
+            }
+
+            if (tracking.Status.Name == "Переносится" && tracking.Task.DeveloperId == Model.UserId
+                 || tracking.Status.Name == "Проверяется" && tracking.Task.ReviewerId == Model.UserId
+                     || tracking.Status.Name == "Дорабатывается" && tracking.Task.DeveloperId == Model.UserId)
+            {
+                <tr class="bg-info">
+                    <td>@i</td>
+                    <td>@tracking.Task.Course.Name</td>
+                    <td>@tracking.Task.Name</td>
+                    @switch (tracking.Status.Name)
+                    {
+                        case "Переносится":
+                            <td>Перенос</td>
+                            break;
+                        case "Проверяется":
+                            <td>Проверка</td>
+                            break;
+                        case "Дорабатывается":
+                            <td>Перенос (доработка)</td>
+                            break;
+                    }
+                    <td>@tracking.Time</td>
+                    <td>
+                        <button class="btn btn-warning btn-block" type="button" data-toggle="collapse" data-target="#{{tracking.Id}}"
+                                aria-expanded="false" aria-controls="collapseExample">
+                            Завершить
+                        </button>
+                        <div class="collapse" id="@tracking.Id">
+                            <div class="card card-body">
+                                <form method="post" action="">
+                                    <textarea class="form-control" name="comment_complete" id="exampleFormControlTextarea1" placeholder="Введите комментарий..." rows="5" cols="3"></textarea>
+                                    <button type="submit" name="Complete" class="btn btn-success" value="@tracking.Id">Принять</button>
+                                    @if (tracking.Task.ReviewerId == Model.UserId)
+                                    {
+                                        <button type="submit" name="Decline" class="btn btn-danger" value="@tracking.Id">Отклонить</button>
+                                    }
+                                </form>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            }
+
+            if (tracking.Status.Name == "Перенесён" && tracking.Task.DeveloperId == Model.UserId
+                || tracking.Status.Name == "Проверен" && tracking.Task.ReviewerId == Model.UserId
+                    || tracking.Status.Name == "Доработан" && tracking.Task.DeveloperId == Model.UserId)
+            {
+                <tr class="bg-success">
+                    <td>@i</td>
+                    <td>@tracking.Task.Course.Name</td>
+                    <td>@tracking.Task.Name</td>
+                    @switch (tracking.Status.Name)
+                    {
+                        case "Перенесён":
+                            <td>Перенос</td>
+                            break;
+                        case "Проверен":
+                            <td>Проверка</td>
+                            break;
+                        case "Доработан":
+                            <td>Перенос (доработка)</td>
+                            break;
+                    }
+                    <td>@tracking.StartTime</td>
+                    <td>@tracking.Time</td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
+
+@if (Model.PageViewModel.HasPreviousPage)
+{
+    <a asp-controller="tasks" asp-action="table"
+               asp-route-page="@(Model.PageViewModel.PageNumber - 1)"
+               class="btn btn-outline-primary">
+        Назад
+    </a>
+}
+
+@if (Model.PageViewModel.HasNextPage)
+{
+    <a asp-controller="tasks" asp-action="table"
+               asp-route-page="@(Model.PageViewModel.PageNumber + 1)"
+               class="btn btn-outline-primary">
+        Вперед
+    </a>
+}

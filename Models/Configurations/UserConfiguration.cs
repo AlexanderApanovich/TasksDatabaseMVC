@@ -13,7 +13,6 @@ namespace TasksDatabase.Models.Configurations
         {
             builder.HasIndex(u => u.UserName);
             builder.Property(u => u.UserName).IsRequired().HasMaxLength(20);
-            builder.Property(u => u.IsAdmin).IsRequired();
             builder.Property(u => u.PasswordHash).IsRequired().HasMaxLength(128);
         }
     }

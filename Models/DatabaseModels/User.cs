@@ -8,13 +8,9 @@ namespace TasksDatabase.Models
 {
     public class User : IdentityUser
     {
-        //public new string Id { get; set; }
-        //public string Name { get; set; }
-        public bool IsAdmin { get; set; }
-
         public override string ToString()
         {
-            return $"<User: id = {Id}, name = {UserName}, isAdmin = {IsAdmin}," +
+            return $"<User: id = {Id}, name = {UserName}, " +
                 $" password_hash = {PasswordHash}>";         //, trackings = {Trackings}>"
         }
     }

@@ -11,40 +11,51 @@
 <body>
     <header>
         <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center">
-            <a href="/" class="navbar-brand d-flex w-50 mr-auto">ФИНО</a>
-            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsingNavbar3">
-                <span class="navbar-toggler-icon"></span>
-            </button>
+            <a asp-controller="home" asp-action="index" class="navbar-brand d-flex w-50 mr-auto">ФИНО</a>
             <div class="navbar-collapse collapse w-100" id="collapsingNavbar3">
                 @if (User.Identity.IsAuthenticated)
                 {
                     @if (User.IsInRole("Admin"))
                     {
-                <ul class="navbar-nav w-100 justify-content-center">
-                    <li class="nav-item ">
-                        <a class="nav-link" asp-controller="admin" asp-action="add">Добавить задание</a>
-                    </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" asp-controller="admin" asp-action="approve">Утвердить</a>
-                    </li>
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                            Отчеты
-                        </a>
-                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                            <a class="dropdown-item" href="#">Блоки</a>
-                            <a class="dropdown-item" href="#">Курсы</a>
-                            <a class="dropdown-item" href="#">Задания</a>
-                            <a class="dropdown-item" href="#">Задание</a>
-                            <a class="dropdown-item" href="#">Трекинги</a>
-                            <div class="dropdown-divider"></div>
-                            <a class="dropdown-item" href="#">Пользователи</a>
-                        </div>
-                    </li>
-                    <li class="nav-item ">
-                        <a class="nav-link" asp-controller="roles" asp-action="index">Привелегии</a>
-                    </li>
-                </ul>
+                        <ul class="navbar-nav w-100 justify-content-center">
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Задания
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="admin" asp-action="add">Добавить задание</a>
+                                    <a class="dropdown-item" asp-controller="admin" asp-action="approve">Утвердить</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Отчеты
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" href="#">Блоки</a>
+                                    <a class="dropdown-item" href="#">Курсы</a>
+                                    <a class="dropdown-item" href="#">Задания</a>
+                                    <a class="dropdown-item" href="#">Задание</a>
+                                    <a class="dropdown-item" href="#">Трекинги</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="#">Пользователи</a>
+                                </div>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    Пользователи
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                                    <a class="dropdown-item" asp-controller="users" asp-action="create">Создать</a>
+                                    <a class="dropdown-item" asp-controller="users" asp-action="edit">Редактировать</a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" asp-controller="roles" asp-action="userlist">Список</a>
+                                </div>
+                            </li>
+                            <li class="nav-item ">
+                                <a class="nav-link" asp-controller="roles" asp-action="index">Привелегии</a>
+                            </li>
+                        </ul>
                     }
                     else
                     {
@@ -57,9 +68,11 @@
                             </li>
                         </ul>
                     }
-
-
-
+                    <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
+                        <li class="nav-item">
+                            <a class="nav-link" href="tasks/table">Таблица</a>
+                        </li>
+                    </ul>
 
                     <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
                         <li class="nav-item">

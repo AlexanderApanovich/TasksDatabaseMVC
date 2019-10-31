@@ -14,6 +14,7 @@ namespace TasksDatabase.Models.Configurations
             builder.Property(u => u.Time).IsRequired();
             builder.Property(u => u.StartTime).IsRequired();
             builder.Property(u => u.Comment).HasMaxLength(255);
+            builder.Property(t => t.StartTime).IsRequired(false);
         }
     }
 }
