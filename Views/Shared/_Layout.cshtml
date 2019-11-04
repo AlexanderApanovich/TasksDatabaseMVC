@@ -10,95 +10,87 @@
 </head>
 <body>
     <header>
-        <nav class="navbar navbar-light navbar-expand-md bg-faded justify-content-center">
-            <a asp-controller="home" asp-action="index" class="navbar-brand d-flex w-50 mr-auto">ФИНО</a>
-            <div class="navbar-collapse collapse w-100" id="collapsingNavbar3">
-                @if (User.Identity.IsAuthenticated)
+        <nav class="navbar navbar-expand-lg navbar-light bg-light">
+            <ul class="nav navbar-nav mr-auto">
+                <li>
+                    <a asp-controller="home" asp-action="index" class="navbar-brand">ФИНО</a>
+                </li>
+            </ul>
+
+            @if (User.Identity.IsAuthenticated)
+            {
+                @if (User.IsInRole("Admin"))
                 {
-                    @if (User.IsInRole("Admin"))
-                    {
-                        <ul class="navbar-nav w-100 justify-content-center">
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Задания
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-controller="admin" asp-action="add">Добавить задание</a>
-                                    <a class="dropdown-item" asp-controller="admin" asp-action="approve">Утвердить</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Отчеты
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" href="#">Блоки</a>
-                                    <a class="dropdown-item" href="#">Курсы</a>
-                                    <a class="dropdown-item" href="#">Задания</a>
-                                    <a class="dropdown-item" href="#">Задание</a>
-                                    <a class="dropdown-item" href="#">Трекинги</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="#">Пользователи</a>
-                                </div>
-                            </li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    Пользователи
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                    <a class="dropdown-item" asp-controller="users" asp-action="create">Создать</a>
-                                    <a class="dropdown-item" asp-controller="users" asp-action="edit">Редактировать</a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" asp-controller="roles" asp-action="userlist">Список</a>
-                                </div>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" asp-controller="roles" asp-action="index">Привелегии</a>
-                            </li>
-                        </ul>
-                    }
-                    else
-                    {
-                        <ul class="navbar-nav w-100 justify-content-center">
-                            <li class="nav-item ">
-                                <a class="nav-link" href="/index">Таблица заданий</a>
-                            </li>
-                            <li class="nav-item ">
-                                <a class="nav-link" href="//codeply.com">Диаграмма Ганта</a>
-                            </li>
-                        </ul>
-                    }
-                    <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
+                    <ul class="nav navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="nav-link" href="tasks/table">Таблица</a>
+                            <a class="nav-link" asp-action="add" asp-controller="admin">Добавить задание</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-action="table" asp-controller="tasks">Утвердить</a>
+                        </li>
+
+                        <li class="nav-item dropdown">
+                            <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                Отчеты
+                            </a>
+                            <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                                <a class="dropdown-item" href="#">Блоки</a>
+                                <a class="dropdown-item" href="#">Курсы</a>
+                                <a class="dropdown-item" href="#">Задания</a>
+                                <a class="dropdown-item" href="#">Задание</a>
+                                <a class="dropdown-item" href="#">Трекинги</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#">Пользователи</a>
+                            </div>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="users" asp-action="index">Пользователи</a>
+                        </li>
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="roles" asp-action="index">Привелегии</a>
                         </li>
                     </ul>
-
-                    <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
-                        <li class="nav-item">
-                            <a class="nav-link">Пользователь: @User.Identity.Name</a>
-                        </li>
-                        @if (User.IsInRole("Admin"))
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link"><b>(Админ)</b></a>
-                            </li>
-                        }
-                    </ul>
-                    <form method="post" asp-controller="Account" asp-action="Logout">
-
-                        <button type="submit" class="btn btn-light">Выход</button>
-                    </form>
                 }
+
                 else
                 {
-                    <ul class="nav navbar-nav ml-auto w-100 justify-content-end">
+                    <ul class="nav navbar-nav mx-auto">
                         <li class="nav-item">
-                            <a class="nav-link text-dark" asp-controller="Account" asp-action="Login">Войти</a>
+                            <a class="nav-link" asp-controller="tasks" asp-action="table">Таблица заданий</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="tasks" asp-action="diagram">Диаграмма Ганта</a>
                         </li>
                     </ul>
                 }
-            </div>
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="nav-link">Пользователь: @User.Identity.Name</a>
+                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link"><b>(Админ)</b></a>
+                        </li>
+                    }
+                    <li>
+                        <form method="post" asp-controller="Account" asp-action="Logout">
+                            <button type="submit" class="btn btn-light">Выход</button>
+                        </form>
+                    </li>
+                </ul>
+            }
+
+            else
+            {
+                <ul class="nav navbar-nav ml-auto">
+                    <li class="nav-item">
+                        <a class="btn btn-light" asp-controller="Account" asp-action="Login">Войти</a>
+                    </li>
+                </ul>
+            }
         </nav>
     </header>
 

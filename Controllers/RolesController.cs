@@ -18,7 +18,7 @@ namespace TasksDatabase.Controllers
             _roleManager = roleManager;
             _userManager = userManager;
         }
-        public IActionResult Index() => View(_roleManager.Roles.ToList());
+        public IActionResult RolesList() => View(_roleManager.Roles.ToList());
 
         public IActionResult Create() => View();
         [HttpPost]
@@ -52,8 +52,8 @@ namespace TasksDatabase.Controllers
             }
             return RedirectToAction("Index");
         }
-
-        public IActionResult UserList() => View(_userManager.Users.ToList());
+        
+        public IActionResult Index() => View(_userManager.Users.ToList());
 
         public async Task<IActionResult> Edit(string userId)
         {

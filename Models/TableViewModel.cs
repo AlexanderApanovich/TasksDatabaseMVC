@@ -5,9 +5,9 @@ using System.Linq;
 
 namespace TasksDatabase.Models
 {
-    public class IndexViewModel
+    public class TableViewModel
     {
-        public List<Tracking> Trackings { get; set; }
+        public List<TaskViewModel> TaskViewModelList { get; set; }
         public PageViewModel PageViewModel { get; set; }
         public int CompletedCount { get; set; }
         public int TotalCount { get; set; }

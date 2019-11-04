@@ -7,9 +7,9 @@ using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace TasksDatabase.Models.Configurations
 {
-    public class TaskConfiguration : IEntityTypeConfiguration<Task>
+    public class ProblemConfiguration : IEntityTypeConfiguration<Problem>
     {
-        public void Configure(EntityTypeBuilder<Task> builder)
+        public void Configure(EntityTypeBuilder<Problem> builder)
         {
             builder.Property(t => t.Name).IsRequired().HasMaxLength(255);
         }

@@ -17,7 +17,7 @@ namespace TasksDatabase
         public DbSet<CourseBlock> CourseBlocks { get; set; }
         public DbSet<Department> Departments { get; set; }
         public DbSet<Status> Statuses { get; set; }
-        public DbSet<Task> Tasks { get; set; }
+        public DbSet<Problem> Problems { get; set; }
         public DbSet<TaskType> TaskTypes { get; set; }
 
         public DbContext(DbContextOptions<DbContext> options) : base(options)
@@ -34,7 +34,7 @@ namespace TasksDatabase
             base.OnModelCreating(modelBuilder);
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new TaskConfiguration());
+            modelBuilder.ApplyConfiguration(new ProblemConfiguration());
             modelBuilder.ApplyConfiguration(new TrackingConfiguration());
         }
     }

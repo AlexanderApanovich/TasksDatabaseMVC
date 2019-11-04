@@ -1,22 +1,19 @@
-﻿@model IEnumerable<Microsoft.AspNetCore.Identity.IdentityRole>
+﻿@model IEnumerable<TasksDatabase.Models.User>
 @{
-    ViewData["Title"] = "Группы";
+    ViewData["Title"] = "Пользователи";
 }
 
-<h2>Список ролей</h2>
+<h2>Привелегии пользователей</h2>
 <table class="table">
-    @foreach (var role in Model)
+    @foreach (var user in Model)
     {
         <tr>
-            <td>@role.Name</td>
+            <td>@user.UserName</td>
             <td>
-                <form asp-action="Delete" asp-route-id="@role.Id" method="post">
-                    <button type="submit" class="btn btn-sm btn-danger">
-                        Удалить
-                    </button>
-                </form>
+                <a class="btn btn-sm btn-primary" asp-action="Edit" asp-route-userid="@user.Id">Права доступа</a>
             </td>
         </tr>
     }
 </table>
-<a asp-action="Create">Добавить роль</a>
+<a class="btn btn-info" asp-action="Create">Добавить роль</a>
+<a class="btn btn-info" asp-action="RolesList">Список ролей</a>

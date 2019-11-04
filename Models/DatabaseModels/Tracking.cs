@@ -12,8 +12,12 @@ namespace TasksDatabase.Models
         public DateTime? StartTime { get; set; }
         public string Comment { get; set; }
 
+
+        public int StatusId { get; set; }
+        public int ProblemId { get; set; }
+        public string UserId { get; set; }
         public Status Status { get; set; }
-        public Task Task { get; set; }
+        public Problem Problem { get; set; }
         public User User { get; set; }
 
         //public Tracking Clone()
@@ -33,7 +37,7 @@ namespace TasksDatabase.Models
         public override string ToString()
         {
             return $"<Tracking: Id = {Id}, Time = {Time}, StartTime = {StartTime}," +
-                $" Comment = {Comment}, Status = {Status}, Task = {Task}, User = {User}";
+                $" Comment = {Comment}, Status = {Status}, Task = {Problem}, User = {User}";
         }
 
     }

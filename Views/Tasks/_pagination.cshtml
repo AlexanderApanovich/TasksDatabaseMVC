@@ -1,0 +1,79 @@
+﻿@using TasksDatabase.Models
+@model TableViewModel
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+@if (Model.PageViewModel.TotalPages > 1)
+{
+    <nav aria-label="Page navigation example">
+        <ul class="pagination">
+            @if (Model.PageViewModel.PageNumber != 1)
+            {
+                <li class="page-item">
+                    <a asp-controller="tasks" asp-action="table"
+                               asp-route-page="1"
+                               class="page-link">
+                        &#171;
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <a asp-controller="tasks" asp-action="table"
+                               asp-route-page="1"
+                               class="page-link">
+                        &#171;
+                    </a>
+                </li>
+            }
+
+            @for (int j = 1; j <= Model.PageViewModel.TotalPages; j++)
+            {
+                @if (Model.PageViewModel.PageNumber == j)
+                {
+                    <li class="page-item active">
+                        <a asp-controller="tasks" asp-action="table"
+                                   asp-route-page="@j"
+                                   class="page-link">
+                            @j
+                        </a>
+                    </li>
+                }
+                else
+                {
+                    <li class="page-item">
+                        <a asp-controller="tasks" asp-action="table"
+                                   asp-route-page="@j"
+                                   class="page-link">
+                            @j
+                        </a>
+                    </li>
+                }
+            }
+
+
+            @if (Model.PageViewModel.PageNumber != Model.PageViewModel.TotalPages)
+            {
+                <li class="page-item">
+                    <a asp-controller="tasks" asp-action="table"
+                               asp-route-page="@(Model.PageViewModel.TotalPages)"
+                               class="page-link">
+                        &#187;
+                    </a>
+                </li>
+            }
+            else
+            {
+                <li class="page-item disabled">
+                    <a asp-controller="tasks" asp-action="table"
+                               asp-route-page="@(Model.PageViewModel.TotalPages)"
+                               class="page-link">
+                        &#187;
+                    </a>
+                </li>
+            }
+        </ul>
+    </nav>
+}

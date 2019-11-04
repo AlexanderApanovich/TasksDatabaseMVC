@@ -7,14 +7,10 @@ using TasksDatabase.Models;
 
 namespace TasksDatabase.ViewModels
 {
-    public class CreateUserViewModel
+    public class ChangePasswordViewModel
     {
-        [Required]
-        [Display(Name = "Логин")]
+        public string Id { get; set; }
         public string UserName { get; set; }
-
-        [Required]
-        [Display(Name = "Пароль")]
-        public string Password { get; set; }
+        public string NewPassword { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace TasksDatabase.Models
 {
-    public class Task
+    public class Problem
     {
         public int Id { get; set; }
         public string Name { get; set; }
