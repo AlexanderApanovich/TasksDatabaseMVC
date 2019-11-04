@@ -82,8 +82,8 @@
                         || Status == "Не доработан" && Developer == CurrentUser)
             {
                 <tr data-toggle="collapse" data-target="@("#collapse" + i)" class="accordion-toggle">
-                    <td>@tracking.Status.Name</td>
-                    <td>@tracking.Id</td>
+                    <td>@i</td>
+                    <td>@tracking.Problem.Course.Name</td>
                     <td>@tracking.Problem.Name</td>
                     <td>@ProblemType</td>
                 </tr>
@@ -99,7 +99,7 @@
                                     @tracking.Comment
                                     <br />
                                 }
-                                <b>Назначено: </b>@tracking.Time
+                                <b>Назначено: </b>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")
                                 <form asp-controller="tasks" asp-action="table" onsubmit="Block(@tracking.Id)">
                                     <div asp-validation-summary="All" class="text-danger"></div>
                                     <div class="form-group">
@@ -117,7 +117,7 @@
                     </tr>
                 }
             }
-            
+
 
             if (Status == "Переносится" && Developer == CurrentUser
                    || Status == "Проверяется" && Reviewer == CurrentUser
@@ -125,11 +125,11 @@
                             || Status == "Не утверждён" && User.IsInRole("Admin"))
             {
                 <tr data-toggle="collapse" data-target="@("#collapse" + i)" class="accordion-toggle">
-                    <td>@tracking.Status.Name</td>
-                    <td>@tracking.Id</td>
+                    <td>@i</td>
+                    <td>@tracking.Problem.Course.Name</td>
                     <td>@tracking.Problem.Name</td>
                     <td>@ProblemType</td>
-                    <td>@tracking.Time</td>
+                    <td>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")</td>
                 </tr>
 
                 {
@@ -143,6 +143,7 @@
                                     @tracking.Comment
                                     <br />
                                 }
+                                <b>Назначено: </b>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")
                                 <form asp-controller="tasks" asp-action="table" onsubmit="Block(@tracking.Id)">
                                     <div asp-validation-summary="All" class="text-danger"></div>
                                     <div class="form-group">
@@ -199,12 +200,12 @@
 
             {
                 <tr data-toggle="collapse" data-target="@("#collapse" + i)" class="accordion-toggle completed">
-                    <td>@Status</td>
-                    <td>@tracking.Id</td>
+                    <td>@i</td>
+                    <td>@tracking.Problem.Course.Name</td>
                     <td>@tracking.Problem.Name</td>
                     <td>@ProblemType</td>
-                    <td>@tracking.StartTime</td>
-                    <td>@tracking.Time</td>
+                    <td>@(tracking.StartTime != null ? tracking.StartTime.Value.ToString("dd.MM.yyyy (hh:mm)") : "n/a")</td>
+                    <td>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")</td>
                 </tr>
             }
         }

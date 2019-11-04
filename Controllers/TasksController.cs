@@ -80,21 +80,10 @@ namespace TasksDatabase.Controllers
             }
         }
 
-        //todo поменять {{tracking.id}} и остальные свойства кнопок
-        //     убрать рекомпиляцию
-
-
-
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Table(TaskViewModel model)
         {
-            //foreach (var i in Request.Form.Keys)
-            //{
-            //    Console.WriteLine($"___________________\n\n{i}: {Request.Form[i]}\n\n________________________");
-            //}
-
-
             var CurrentUser = await _userManager.GetUserAsync(User);
             string UserId = CurrentUser.Id;
 
@@ -252,14 +241,6 @@ namespace TasksDatabase.Controllers
             }
 
             return RedirectToAction("table");
-        }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> LogOut()
-        {
-            await _signInManager.SignOutAsync();
-            return RedirectToAction("Index", "Home");
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

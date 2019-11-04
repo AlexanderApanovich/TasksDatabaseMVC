@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.ComponentModel.DataAnnotations;
 
 namespace TasksDatabase.Models
 {
@@ -19,20 +20,6 @@ namespace TasksDatabase.Models
         public Status Status { get; set; }
         public Problem Problem { get; set; }
         public User User { get; set; }
-
-        //public Tracking Clone()
-        //{
-        //    return new Tracking
-        //    {
-        //        Id = this.Id,
-        //        Time = this.Time,
-        //        StartTime = this.StartTime,
-        //        Comment = this.Comment,
-        //        Status = this.Status,
-        //        Task = this.Task,
-        //        User = this.User
-        //    };
-        //}
 
         public override string ToString()
         {
