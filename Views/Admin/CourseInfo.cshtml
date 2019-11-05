@@ -1,0 +1,44 @@
+﻿@using TasksDatabase.ViewModels
+@model CourseInfoViewModel
+@{
+    ViewBag.Title = "Дисциплины";
+}
+
+<body>
+    <h2>@Model.Title</h2>
+
+    <table class="table table-hover" style="border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th scope="col">№</th>
+                <th scope="col">Дисциплина</th>
+                <th scope="col">Задача</th>
+                <th scope="col">Текущий статус</th>
+                <th scope="col">Кем</th>
+                <th scope="col">Информация</th>
+            </tr>
+        </thead>
+        <tbody>
+            @{ int i = 0;}
+            @foreach (var tracking in Model.Trackings)
+            {
+                { i++; }
+                <tr>
+                    <td>@i</td>
+                    <td>@tracking.Problem.Course.Name</td>
+                    <td>@tracking.Problem.Name</td>
+                    <td>@tracking.Status.Name</td>
+                    <td>@tracking.User.UserName</td>
+                    <td>
+                        <form asp-action="taskinfo" method="get" class="form-inline">
+                            <input type="hidden" name="task" value="@tracking.Problem.Id" />
+                            <input type="submit" class="btn btn-success" value="Информация">
+                        </form>
+                    </td>
+                </tr>              
+            }
+        </tbody>
+    </table>
+
+
+</body>

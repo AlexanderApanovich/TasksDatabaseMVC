@@ -12,5 +12,6 @@ namespace TasksDatabase.Models
         public string FullName { get; set; }
 
         public Department Department { get; set; }
+        public ICollection<CourseBlock> CourseBlocks { get; set; }
     }
 }

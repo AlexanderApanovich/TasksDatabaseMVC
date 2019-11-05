@@ -1,0 +1,38 @@
+﻿@using TasksDatabase.ViewModels
+@model UserInfoViewModel
+@{
+    ViewBag.Title = "Пользователи";
+}
+
+<body>
+    <table class="table table-hover" style="border-collapse:collapse;">
+        <thead>
+            <tr>
+                <th scope="col">Статус</th>
+                <th scope="col">Кем</th>
+                <th scope="col">Когда</th>
+                <th scope="col">Комментарий</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var tracking in Model)
+            {
+                <tr>
+                    <td>@tracking.Status.Name</td>
+                    <td>@tracking.User.UserName</td>
+                    <td>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")</td>
+                    @if (tracking.Comment != "")
+                    {
+                        <td>@tracking.Comment</td>
+                    }
+                    else
+                    {
+                        <td></td>
+                    }
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+</body>
