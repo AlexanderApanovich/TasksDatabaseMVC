@@ -195,15 +195,13 @@ namespace TasksDatabase.Controllers
             using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
             {
                 UserInfoViewModel model = new UserInfoViewModel();
-                model.Users = await db.Users.Select(u => u).ToListAsync();
+                model.UserInfos = await db.Users.Select(u => u.).ToListAsync();
+
+
+
 
                 if (user != "")
                 {
-                    List<Status> Statuses = db.Statuses.Select(s => s).ToList();
-                    int workDoneId = Statuses.Where(s => s.Name == "Перенесён").FirstOrDefault().Id;
-                    int reviewDoneId = Statuses.Where(s => s.Name == "Проверен").FirstOrDefault().Id;
-                    int reworkDoneId = Statuses.Where(s => s.Name == "Доработан").FirstOrDefault().Id;
-
                     var latestTracking = db.Trackings.Where(t => t.User.Id == user)
                                                      .GroupBy(t => t.Problem.Id)
                                                      .Select(t => t.Max(t => t.Id)).ToList();
@@ -221,50 +219,21 @@ namespace TasksDatabase.Controllers
                     model.CurrentTracking = CurrentTracking;
                     model.CurrentTaskTime = (DateTime.Now - CurrentTracking.Time).TotalMinutes;
 
-
-                    model
-
-
-
-
-
-
-//# количество
-//                    user.work_count = db.session.query(Tracking).filter(Tracking.User == user.Id).\
-//            filter(Tracking.StartTime != None).filter(Tracking.Status == worked_id).count()
-
-//        user.review_count = db.session.query(Tracking).filter(Tracking.User == user.Id).\
-//            filter(Tracking.StartTime != None).filter(Tracking.Status == reviewed_id).count()
-
-//        user.rework_count = db.session.query(Tracking).filter(Tracking.User == user.Id).\
-//            filter(Tracking.StartTime != None).filter(Tracking.Status == reworked_id).count()
-
-//        # трудоемкость
-//                    work_time_tracking = db.session.query(Tracking).filter(Tracking.User == user.Id).\
-//            filter(Tracking.StartTime != None).filter(Tracking.Status == worked_id).all()
-//        user.work_time = datetime.timedelta()
-//        for time in work_time_tracking:
-//            user.work_time += time.Time - time.StartTime
-//        user.work_time = to_minutes(user.work_time)
-
-//        review_time_tracking = db.session.query(Tracking).filter(Tracking.User == user.Id).\
-//            filter(Tracking.StartTime != None).filter(Tracking.Status == reviewed_id).all()
-//        user.review_time = datetime.timedelta()
-//        for time in review_time_tracking:
-//            user.review_time += time.Time - time.StartTime
-//        user.review_time = to_minutes(user.review_time)
-
-//        rework_time_tracking = db.session.query(Tracking).filter(Tracking.User == user.Id).\
-//            filter(Tracking.StartTime != None).filter(Tracking.Status == reworked_id).all()
-//        user.rework_time = datetime.timedelta()
-//        for time in rework_time_tracking:
-//            user.rework_time += time.Time - time.StartTime
-//        user.rework_time = to_minutes(user.rework_time)
+                    var trackings = db.Trackings.Where(t => t.User.Id == user && t.StartTime != null)
+                                                .Include(t => t.Status).ToList();
+                    model.WorkCount = trackings.Where(t => t.Status.Name == "Перенесён").Count();
+                    model.ReviewTime = trackings.Where(t => t.Status.Name == "Проверен").Count();
+                    model.ReworkCount = trackings.Where(t => t.Status.Name == "Доработан").Count();
 
 
+                    model.WorkTime = db.Trackings.Where(t => t.Status.Name == "Перенесён")
+                                                 .Sum(t => (t.Time - t.StartTime).Value.TotalMinutes);
 
+                    model.ReviewTime = db.Trackings.Where(t => t.Status.Name == "Проверен")
+                                                   .Sum(t => (t.Time - t.StartTime).Value.TotalMinutes);
 
-
+                    model.ReworkTime = db.Trackings.Where(t => t.Status.Name == "Доработан")
+                                                   .Sum(t => (t.Time - t.StartTime).Value.TotalMinutes);
                 }
 
                 return View(model);

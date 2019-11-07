@@ -7,15 +7,21 @@ using TasksDatabase.Models;
 
 namespace TasksDatabase.ViewModels
 {
-    public class CurrentTrackingViewModel
+    public class UserInfoViewModel
     {
-        double? CurrentTaskTime { get; set; }
-        double? WorkTime { get; set; }
-        double? ReviewTime { get; set; }
-        double? ReworkTime { get; set; }
-        Tracking CurrentTracking { get; set; }
-        public int WorkCount { get; set; }
-        public int ReviewCount { get; set; }
-        public int ReworkCount { get; set; }
+        public List<UserInfo> UserInfos { get; set; }
+
+        public class UserInfo
+        {
+            public User User { get; set; }
+            public double? CurrentTaskTime { get; set; }
+            public double? WorkTime { get; set; }
+            public double? ReviewTime { get; set; }
+            public double? ReworkTime { get; set; }
+            public Tracking CurrentTracking { get; set; }
+            public int WorkCount { get; set; }
+            public int ReviewCount { get; set; }
+            public int ReworkCount { get; set; }
+        }
     }
 }

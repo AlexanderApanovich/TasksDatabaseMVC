@@ -5,6 +5,43 @@
 }
 
 <body>
+    <table class="table table-hover">
+        <caption>Текущие задания</caption>
+        <thead>
+            <tr>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Текущее задание</th>
+                <th scope="col">Дисциплина</th>
+                <th scope="col">Тип</th>
+                <th scope="col">Статус</th>
+                <th scope="col">Длительность</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in Model.User)
+            {
+                <tr>
+                    <td>@user.UserName</td>
+                    <td>@user.urrent_task_name</td>
+                    <td>{{user.current_task_course}}</td>
+                    <td>{{user.current_task_type}}</td>
+                    <td>{{user.current_task_status}}</td>
+                    <td>{{user.current_task_time}} мин</td>
+                    
+                    @*<td>Нет</td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    {% endif %}*@
+                </tr>
+            }
+        </tbody>
+    </table>
+
+
+
+
     <table class="table table-hover" style="border-collapse:collapse;">
         <thead>
             <tr>
