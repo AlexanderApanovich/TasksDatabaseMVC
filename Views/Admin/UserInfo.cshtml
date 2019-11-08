@@ -18,52 +18,25 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var user in Model.User)
+            @foreach (var info in Model.UserInfos)
             {
                 <tr>
-                    <td>@user.UserName</td>
-                    <td>@user.urrent_task_name</td>
-                    <td>{{user.current_task_course}}</td>
-                    <td>{{user.current_task_type}}</td>
-                    <td>{{user.current_task_status}}</td>
-                    <td>{{user.current_task_time}} мин</td>
-                    
-                    @*<td>Нет</td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                    {% endif %}*@
-                </tr>
-            }
-        </tbody>
-    </table>
-
-
-
-
-    <table class="table table-hover" style="border-collapse:collapse;">
-        <thead>
-            <tr>
-                <th scope="col">Статус</th>
-                <th scope="col">Кем</th>
-                <th scope="col">Когда</th>
-                <th scope="col">Комментарий</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var tracking in Model)
-            {
-                <tr>
-                    <td>@tracking.Status.Name</td>
-                    <td>@tracking.User.UserName</td>
-                    <td>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")</td>
-                    @if (tracking.Comment != "")
+                    @if (info.CurrentTracking != null)
                     {
-                        <td>@tracking.Comment</td>
+                        <td>@info.User.UserName</td>
+                        <td>@info.CurrentTracking.Problem.Name</td>
+                        <td>@info.CurrentTracking.Problem.Course.Name</td>
+                        <td>@info.CurrentTracking.Problem.TaskType.Name</td>
+                        <td>@info.CurrentTracking.Status.Name</td>
+                        <td>@info.CurrentTaskTime мин</td>
                     }
                     else
                     {
+                        <td>@info.User.UserName</td>
+                        <td>Нет</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
                         <td></td>
                     }
                 </tr>
@@ -71,5 +44,41 @@
         </tbody>
     </table>
 
-
+    <table class="table table-hover">
+        <caption>Полная информация</caption>
+        <thead>
+            <tr>
+                <th scope="col">Пользователь</th>
+                <th scope="col">Количество переносов</th>
+                <th scope="col">Количество проверок</th>
+                <th scope="col">Количество доработок</th>
+                <th scope="col">Трудоемкость переносов</th>
+                <th scope="col">Трудоемкость проверок</th>
+                <th scope="col">Трудоемкость доработок</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var info in Model.UserInfos)
+            {
+                <tr>
+                    <td>@info.User.UserName</td>
+                    <td>@info.WorkCount</td>
+                    <td>@info.ReviewCount</td>
+                    <td>@info.ReworkCount</td>
+                    <td>
+                        @(info.CurrentTracking?.Status.Name == "Переносится" ?
+                $"{info.WorkTime ?? 0 + info.CurrentTaskTime} мин" : $"{ info.WorkTime ?? 0 } мин")
+                    </td>
+                    <td>
+                        @(info.CurrentTracking?.Status.Name == "Проверяется" ?
+                $"{info.ReviewTime ?? 0 + info.CurrentTaskTime} мин" : $"{ info.ReviewTime ?? 0} мин")
+                    </td>
+                    <td>
+                        @(info.CurrentTracking?.Status.Name == "Дорабатывается" ?
+                $"{info.ReworkTime ?? 0 + info.CurrentTaskTime.Value} мин" : $"{ info.ReworkTime ?? 0 } мин")
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 </body>

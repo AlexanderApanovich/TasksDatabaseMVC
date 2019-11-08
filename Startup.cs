@@ -28,17 +28,17 @@ namespace TasksDatabase
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<DbContext>(options =>
-    options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection"))); //сделать еще один context?
+                                             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
 
             services.AddIdentity<User, IdentityRole>()
-                .AddEntityFrameworkStores<DbContext>();
+                    .AddEntityFrameworkStores<DbContext>();
             services.AddControllersWithViews();
-            services.AddMvc().AddRazorRuntimeCompilation(); //delete
+            services.AddMvc().AddRazorRuntimeCompilation(); //todo: delete
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {            
+        {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();

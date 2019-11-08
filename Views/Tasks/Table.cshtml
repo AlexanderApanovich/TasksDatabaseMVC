@@ -99,7 +99,7 @@
                                     @tracking.Comment
                                     <br />
                                 }
-                                <b>Назначено: </b>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")
+                                <b>Назначено: </b>@tracking.Time.ToString("dd.MM.yyyy (HH:mm)")
                                 <form asp-controller="tasks" asp-action="table" onsubmit="Block(@tracking.Id)">
                                     <div asp-validation-summary="All" class="text-danger"></div>
                                     <div class="form-group">
@@ -143,7 +143,7 @@
                                     @tracking.Comment
                                     <br />
                                 }
-                                <b>Назначено: </b>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")
+                                <b>Назначено: </b>@tracking.Time.ToString("dd.MM.yyyy (HH:mm)")
                                 <form asp-controller="tasks" asp-action="table" onsubmit="Block(@tracking.Id)">
                                     <div asp-validation-summary="All" class="text-danger"></div>
                                     <div class="form-group">
@@ -204,7 +204,7 @@
                     <td>@tracking.Problem.Course.Name</td>
                     <td>@tracking.Problem.Name</td>
                     <td>@ProblemType</td>
-                    <td>@(tracking.StartTime != null ? tracking.StartTime.Value.ToString("dd.MM.yyyy (hh:mm)") : "n/a")</td>
+                    <td>@(tracking.StartTime != null ? tracking.StartTime.Value.ToString("dd.MM.yyyy (HH:mm)") : "n/a")</td>
                     <td>@tracking.Time.ToString("dd.MM.yyyy (hh:mm)")</td>
                 </tr>
             }

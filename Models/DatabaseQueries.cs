@@ -47,5 +47,16 @@ namespace TasksDatabase.Models
                                          .Select(t => t).ToList();
             return completedTrackingsList;
         }
+
+        public static IEnumerable<(string UserId,int Count)> GetCount(IEnumerable<Tracking> query)
+        {
+            return query.GroupBy(t => t.UserId)
+                        .Select(t => (t.FirstOrDefault().UserId, t.Count()));
+        }
+        public static IEnumerable<(string UserId, int? Sum)> GetTime(IEnumerable<Tracking> query)
+        {
+            return query.GroupBy(t => t.UserId)
+                        .Select(t => (t.FirstOrDefault().UserId, (int?) t.Sum(t => (t.Time - t.StartTime).Value.TotalMinutes)));
+        }
     }
 }

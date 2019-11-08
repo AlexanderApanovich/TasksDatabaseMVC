@@ -92,7 +92,7 @@ namespace TasksDatabase.Controllers
 
                 await _userManager.RemoveFromRolesAsync(user, removedRoles);
 
-                return RedirectToAction("UserList");
+                return RedirectToAction("Index");
             }
 
             return NotFound();

@@ -195,51 +195,136 @@ namespace TasksDatabase.Controllers
             using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
             {
                 UserInfoViewModel model = new UserInfoViewModel();
-                model.UserInfos = await db.Users.Select(u => u.).ToListAsync();
+                model.Users = db.Users.Select(u => u);
 
+                IEnumerable<User> UsersList;
+                IEnumerable<Tracking> latestTrackingCommon;
 
-
-
-                if (user != "")
+                if (user != null)
                 {
-                    var latestTracking = db.Trackings.Where(t => t.User.Id == user)
-                                                     .GroupBy(t => t.Problem.Id)
-                                                     .Select(t => t.Max(t => t.Id)).ToList();
-                    var allTrackings = db.Trackings.Where(t => latestTracking.Contains(t.Id))
-                                                   .Include(t => t.Problem)
-                                                       .ThenInclude(p => p.TaskType)
-                                                   .Include(t => t.Problem.Course)
-                                                   .Include(t => t.Status)
-                                                   .Select(t => t).ToList();
-
-                    var CurrentTracking = allTrackings.Where(t =>
-                                            new string[] { "Дорабатывается", "Переносится", "Проверяется" }
-                                            .Contains(t.Status.Name)).FirstOrDefault();
-
-                    model.CurrentTracking = CurrentTracking;
-                    model.CurrentTaskTime = (DateTime.Now - CurrentTracking.Time).TotalMinutes;
-
-                    var trackings = db.Trackings.Where(t => t.User.Id == user && t.StartTime != null)
-                                                .Include(t => t.Status).ToList();
-                    model.WorkCount = trackings.Where(t => t.Status.Name == "Перенесён").Count();
-                    model.ReviewTime = trackings.Where(t => t.Status.Name == "Проверен").Count();
-                    model.ReworkCount = trackings.Where(t => t.Status.Name == "Доработан").Count();
-
-
-                    model.WorkTime = db.Trackings.Where(t => t.Status.Name == "Перенесён")
-                                                 .Sum(t => (t.Time - t.StartTime).Value.TotalMinutes);
-
-                    model.ReviewTime = db.Trackings.Where(t => t.Status.Name == "Проверен")
-                                                   .Sum(t => (t.Time - t.StartTime).Value.TotalMinutes);
-
-                    model.ReworkTime = db.Trackings.Where(t => t.Status.Name == "Доработан")
-                                                   .Sum(t => (t.Time - t.StartTime).Value.TotalMinutes);
+                    UsersList = await db.Users.Where(u => u.Id == user).Select(u => u).ToListAsync();
+                    latestTrackingCommon = db.Trackings.Include(t => t.Status)
+                                                       .Where(t => t.User.Id == user);
                 }
+                else
+                {
+                    UsersList = await db.Users.Select(u => u).ToListAsync();
+                    latestTrackingCommon = db.Trackings.Include(t => t.Status);
+                }
+
+                var latestTracking = latestTrackingCommon.GroupBy(t => t.ProblemId)
+                                                         .Select(t => t.Max(t => t.Id));
+
+                IEnumerable<Tracking> allTrackings = db.Trackings.Where(t => latestTracking.Contains(t.Id))
+                                                                 .Include(t => t.Problem)
+                                                                     .ThenInclude(p => p.TaskType)
+                                                                 .Include(t => t.Problem.Course)
+                                                                 .Include(t => t.User)
+                                                                 .Select(t => t);
+
+                //текущее задание и время его выполнения
+                var CurrentTracking = allTrackings.Where(t =>
+                                      new string[] { "Дорабатывается", "Переносится", "Проверяется" }
+                                              .Contains(t.Status.Name)).Select(t => t);
+
+                var CurrentTaskTime = CurrentTracking.Select(t => (UserId: t.UserId, CurrentTime: (int?)(DateTime.Now - t.Time).TotalMinutes));
+
+                //foreach (var a in CurrentTaskTime)
+                //{
+                //    Console.BackgroundColor = ConsoleColor.White;
+                //    Console.ForegroundColor = ConsoleColor.Black;
+
+                //    //Console.WriteLine($"\n------------{a.ToString()}-----------------\n");
+                //    Console.WriteLine($"\n------------{a.UserId}: {a.CurrentTime}-----------------\n");
+
+                //    Console.BackgroundColor = ConsoleColor.Black;
+                //    Console.ForegroundColor = ConsoleColor.White;
+                //}
+
+
+                //получение количества выполненных заданий и общего времени на каждый тип заданий
+                var WorkDone = latestTrackingCommon.Where(t => t.StartTime != null && t.Status.Name == "Перенесён");
+                var ReviewDone = latestTrackingCommon.Where(t => t.StartTime != null && t.Status.Name == "Проверен");
+                var ReworkDone = latestTrackingCommon.Where(t => t.StartTime != null && t.Status.Name == "Доработан");
+
+                var WorkCount = DatabaseQueries.GetCount(WorkDone);
+                var ReviewCount = DatabaseQueries.GetCount(ReviewDone);
+                var ReworkCount = DatabaseQueries.GetCount(ReworkDone);
+
+                var WorkTime = DatabaseQueries.GetTime(WorkDone);
+                var ReviewTime = DatabaseQueries.GetTime(ReviewDone);
+                var ReworkTime = DatabaseQueries.GetTime(ReworkDone);
+
+
+
+
+
+
+
+
+
+                //объединение результатов в одну таблицу
+                var UsersWithInfo = from u in UsersList
+
+                                    join ctgGroup in CurrentTracking on u.Id equals ctgGroup.UserId into ctgGroup
+                                    from ctg in ctgGroup.DefaultIfEmpty() //LEFT OUTER JOIN
+
+                                    join cttGroup in CurrentTaskTime on u.Id equals cttGroup.UserId into cttGroup
+                                    from ctt in cttGroup.DefaultIfEmpty()
+
+
+                                    join wcGroup in WorkCount on u.Id equals wcGroup.UserId into wcGroup
+                                    from wc in wcGroup.DefaultIfEmpty()
+
+                                    join revcGroup in ReviewCount on u.Id equals revcGroup.UserId into revcGroup
+                                    from revc in revcGroup.DefaultIfEmpty()
+
+                                    join rewcGroup in ReworkCount on u.Id equals rewcGroup.UserId into rewcGroup
+                                    from rewc in rewcGroup.DefaultIfEmpty()
+
+
+                                    join wtGroup in WorkTime on u.Id equals wtGroup.UserId into wtGroup
+                                    from wt in wtGroup.DefaultIfEmpty()
+
+                                    join revtGroup in ReviewTime on u.Id equals revtGroup.UserId into revtGroup
+                                    from revt in revtGroup.DefaultIfEmpty()
+
+                                    join rewtGroup in ReworkTime on u.Id equals rewtGroup.UserId into rewtGroup
+                                    from rewt in rewtGroup.DefaultIfEmpty()
+
+                                    select new UserInfoViewModel.UserInfo
+                                    {
+                                        User = u,
+                                        CurrentTracking = ctg,
+                                        CurrentTaskTime = ctt.CurrentTime,
+                                        WorkCount = wc.Count,
+                                        ReviewCount = revc.Count,
+                                        ReworkCount = rewc.Count,
+                                        WorkTime = wt.Sum,
+                                        ReviewTime = revt.Sum,
+                                        ReworkTime = rewt.Sum,
+                                    };
+
+                //foreach (var a in UsersWithInfo.ToList())
+                //{
+                //    Console.WriteLine($"------------{a.ToString()}-----------------");
+                //    Console.WriteLine($"a.CurrentTaskTime: {a.CurrentTaskTime}");
+                //    Console.WriteLine($"a.CurrentTracking: {a.CurrentTracking}");
+                //    Console.WriteLine($"a.ReviewCount: {a.ReviewCount}");
+                //    Console.WriteLine($"a.ReviewTime: {a.ReviewTime}");
+                //    Console.WriteLine($"a.ReworkCount: {a.ReworkCount}");
+                //    Console.WriteLine($"a.ReworkTime: {a.ReworkTime}");
+                //    Console.WriteLine($"a.User.UserName: {a.User.UserName}");
+                //    Console.WriteLine($"a.WorkCount: {a.WorkCount}");
+                //    Console.WriteLine($"a.WorkTime: {a.WorkTime}");
+                //    Console.WriteLine($"------------{a.ToString()}--(end)----------");
+                //}
+
+                model.UserInfos = UsersWithInfo.ToList();
 
                 return View(model);
             }
         }
-
     }
 
 }

@@ -12,7 +12,7 @@ namespace TasksDatabase.Models.Configurations
         public void Configure(EntityTypeBuilder<Course> builder)
         {
             builder.Property(u => u.Name).IsRequired().HasMaxLength(20);
-            builder.Property(u => u.FullName).IsRequired().HasMaxLength(50);
+            builder.Property(u => u.FullName).IsRequired().HasMaxLength(100);
         }
     }
 }
