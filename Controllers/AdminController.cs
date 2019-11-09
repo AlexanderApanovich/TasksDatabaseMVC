@@ -1,18 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using TasksDatabase.Models;
 using TasksDatabase.ViewModels;
 using Microsoft.EntityFrameworkCore;
-using TasksDatabase.Controllers;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TasksDatabase.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class AdminController : Controller
     {
         private readonly UserManager<User> _userManager;
@@ -44,7 +43,7 @@ namespace TasksDatabase.Controllers
                 Types = types,
                 Users = users
             };
-            return View(model);
+            return View(model); //отправляем модель в представление
         }
 
         [HttpPost]
@@ -64,7 +63,7 @@ namespace TasksDatabase.Controllers
 
             using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
             {
-                notStartedStatus = db.Statuses.Where(s => s.Name == "Не перенесён").Select(s => s.Id).First();
+                notStartedStatus = await db.Statuses.Where(s => s.Name == "Не перенесён").Select(s => s.Id).FirstAsync();
 
                 Problem problem = new Problem
                 {
@@ -74,7 +73,7 @@ namespace TasksDatabase.Controllers
                     DeveloperId = developerId,
                     ReviewerId = reviewerId
                 };
-                await db.AddAsync(problem);
+                await db.AddAsync(problem);  //добавляем задание со статусом "Не перенесён"
                 await db.SaveChangesAsync();
 
                 Tracking tracking = new Tracking
@@ -85,7 +84,7 @@ namespace TasksDatabase.Controllers
                     ProblemId = problem.Id,
                     UserId = developerId
                 };
-                await db.AddAsync(tracking);
+                await db.AddAsync(tracking); //добавляем трекинг, соответствующий этому заданию
                 await db.SaveChangesAsync();
             }
 
@@ -99,21 +98,21 @@ namespace TasksDatabase.Controllers
             {
                 BlockInfoViewModel model = new BlockInfoViewModel();
 
-                var blocksQuery = db.Blocks.Select(b => b);
-                model.Blocks = await blocksQuery.ToListAsync();
+                model.Blocks = await db.Blocks.Select(b => b).ToListAsync();
 
-                if (block != 0)
+                if (block != 0) //все блоки
                 {
-                    model.Courses = db.CourseBlocks.Where(b => b.BlockId == block)
-                                                   .Include(c => c.Course)
-                                                   .Join(db.Courses,
-                                                         b => b.CourseId,
-                                                         c => c.Id,
-                                                         (b, c) => c).ToList();
+                    model.Courses = await db.CourseBlocks.Where(b => b.BlockId == block)
+                                                         .Include(c => c.Course)
+                                                         .Join(db.Courses,
+                                                               b => b.CourseId,
+                                                               c => c.Id,
+                                                               (b, c) => c)
+                                                         .ToListAsync();
                 }
-                else
+                else //текущий блок
                 {
-                    model.Courses = db.Courses.Select(c => c).ToList();
+                    model.Courses = await db.Courses.Select(c => c).ToListAsync();
                 }
                 model.CurrentBlock = block;
 
@@ -127,58 +126,58 @@ namespace TasksDatabase.Controllers
             using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
             {
                 CourseInfoViewModel model = new CourseInfoViewModel();
-                List<int> latestTracking;
+                IEnumerable<int> latestTracking;
 
-                if (block == 0 && course == 0)
+                if (block == 0 && course == 0) //страница по умолчанию
                 {
-                    latestTracking = await db.Trackings.GroupBy(t => t.Problem.Id)
-                                                 .Select(t => t.Max(t => t.Id)).ToListAsync();
+                    latestTracking = db.Trackings.GroupBy(t => t.Problem.Id)
+                                                 .Select(t => t.Max(t => t.Id));
                     model.Title = $"Задания всех блоков";
                 }
-                else if (course == 0)
+                else if (course == 0) //выбран блок
                 {
-                    latestTracking = await db.Trackings.Where(t => t.Problem.Course.CourseBlocks
-                                                                  .Any(cb => cb.BlockId == block))
+                    latestTracking = db.Trackings.Where(t => t.Problem.Course.CourseBlocks
+                                                 .Any(cb => cb.BlockId == block))
                                                  .GroupBy(t => t.Problem.Id)
-                                                 .Select(t => t.Max(t => t.Id)).ToListAsync();
+                                                 .Select(t => t.Max(t => t.Id));
                     model.Title = $"Задания блока { db.Blocks.Where(b => b.Id == block).FirstOrDefault().Name }";
                 }
-                else
+                else //выбран курс
                 {
-                    latestTracking = await db.Trackings.Where(t => t.Problem.Course.Id == course)
+                    latestTracking = db.Trackings.Where(t => t.Problem.Course.Id == course)
                                                  .GroupBy(t => t.Problem.Id)
-                                                 .Select(t => t.Max(t => t.Id)).ToListAsync();
+                                                 .Select(t => t.Max(t => t.Id));
                     model.Title = $"Задания дисциплины { db.Courses.Where(c => c.Id == course).FirstOrDefault().FullName }";
                 }
 
-                model.Trackings = db.Trackings.Where(t => latestTracking.Contains(t.Id))
-                                              .Include(t => t.Problem)
-                                                .ThenInclude(p => p.Course)
-                                              .Include(t => t.Status)
-                                              .Include(t => t.User)
-                                              .OrderBy(t => t.Problem.Course.Id)
-                                              .ThenBy(t => t.Problem.Name)
-                                              .Select(t => t)
-                                              .ToList();
+                model.Trackings = await db.Trackings.Where(t => latestTracking.Contains(t.Id))
+                                                    .Include(t => t.Problem)
+                                                      .ThenInclude(p => p.Course)
+                                                    .Include(t => t.Status)
+                                                    .Include(t => t.User)
+                                                    .OrderBy(t => t.Problem.Course.Id)
+                                                    .ThenBy(t => t.Problem.Name)
+                                                    .Select(t => t)
+                                                    .ToListAsync();
 
                 return View(model);
             }
         }
 
-        public IActionResult TaskInfo(int task)
+        public async Task<IActionResult> TaskInfo(int task)
         {
             using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
             {
                 CourseInfoViewModel model = new CourseInfoViewModel();
 
-                var TrackingsList = db.Trackings.Where(t => t.Problem.Id == task)
-                                              .Include(t => t.Problem)
-                                                .ThenInclude(p => p.Course)
-                                              .Include(t => t.Status)
-                                              .Include(t => t.User)
-                                              .OrderByDescending(t => t.Time)
-                                              .Select(t => t)
-                                              .ToList();
+                List<Tracking> TrackingsList = await db.Trackings.Where(t => t.Problem.Id == task)
+                                                                 .Include(t => t.Problem)
+                                                                   .ThenInclude(p => p.Course)
+                                                                 .Include(t => t.Status)
+                                                                 .Include(t => t.User)
+                                                                 .OrderByDescending(t => t.Time)
+                                                                 .Select(t => t)
+                                                                 .ToListAsync();
 
                 return View(TrackingsList);
             }
@@ -191,7 +190,7 @@ namespace TasksDatabase.Controllers
                 UserInfoViewModel model = new UserInfoViewModel();
                 model.Users = db.Users.Select(u => u);
 
-                IEnumerable<User> UsersList;
+                IEnumerable<User> UsersList; //для выбора пользователя в представлении
                 IEnumerable<Tracking> latestTrackingCommon;
 
                 if (user != null)

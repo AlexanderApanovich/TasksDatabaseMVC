@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using TasksDatabase.ViewModels;
-using System.Linq;
 
 namespace TasksDatabase.Models
 {

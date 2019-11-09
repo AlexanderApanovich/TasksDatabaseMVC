@@ -1,8 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 using TasksDatabase.Models;
 
 namespace TasksDatabase.ViewModels
@@ -29,8 +26,8 @@ namespace TasksDatabase.ViewModels
         [Display(Name = "Комментарий (опционально)")]
         public string Comment { get; set; }
 
-        public IEnumerable<Course> Courses { get; set; }
-        public IEnumerable<TaskType> Types { get; set; }
-        public IEnumerable<User> Users { get; set; }
+        public List<Course> Courses { get; set; }
+        public List<TaskType> Types { get; set; }
+        public List<User> Users { get; set; }
     }
 }

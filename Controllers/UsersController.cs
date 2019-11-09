@@ -4,9 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
 using TasksDatabase.Models;
 using TasksDatabase.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TasksDatabase.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class UsersController : Controller
     {
         UserManager<User> _userManager;

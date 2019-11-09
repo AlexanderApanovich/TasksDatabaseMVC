@@ -1,8 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace TasksDatabase.Models
 {
@@ -16,7 +14,7 @@ namespace TasksDatabase.Models
             return latestTracking;
         }
 
-        public static List<Tracking> GetAllLatestTrackings(DbContext db, string userId)
+        public static IEnumerable<Tracking> GetAllLatestTrackings(DbContext db, string userId)
         {
             //последний трекинг по каждому заданию
             var latestTrackingQuery = GetLatestTrackings(db, userId);
@@ -30,11 +28,11 @@ namespace TasksDatabase.Models
                                                              .ThenInclude(c => c.Department)
                                                      .Include(t => t.Problem)
                                                          .ThenInclude(t => t.TaskType)
-                                                     .Select(t => t).ToList();
+                                                     .Select(t => t);
             return allLatestTrackingsList;
         }
 
-        public static List<Tracking> GetCompletedTrackings(DbContext db, string userId)
+        public static IEnumerable<Tracking> GetCompletedTrackings(DbContext db, string userId)
         {
             var completedTrackingsList = db.Trackings.Where(t => t.User.Id == userId && t.StartTime != null)  //трекинги завершенных заданий
                                                      .Include(t => t.Status)
@@ -44,7 +42,7 @@ namespace TasksDatabase.Models
                                                              .ThenInclude(c => c.Department)
                                                      .Include(t => t.Problem)
                                                          .ThenInclude(t => t.TaskType)
-                                                     .Select(t => t).ToList();
+                                                     .Select(t => t);
             return completedTrackingsList;
         }
 

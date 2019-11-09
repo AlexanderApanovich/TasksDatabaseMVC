@@ -3,12 +3,13 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using TasksDatabase.Models;
 using TasksDatabase.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 
 namespace TasksDatabase.Controllers
 {
+    [Authorize(Roles ="Admin")]
     public class RolesController : Controller
     {
         RoleManager<IdentityRole> _roleManager;

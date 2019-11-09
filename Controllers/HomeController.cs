@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using TasksDatabase.Models;
@@ -24,17 +20,17 @@ namespace TasksDatabase.Controllers
             return RedirectToAction("table", "tasks");
         }
 
-        [HttpGet]
-        public IActionResult Login()
-        {
-            return View();
-        }
+        //[HttpGet]
+        //public IActionResult Login()
+        //{
+        //    return View();
+        //}
 
-        [HttpPost]
-        public IActionResult Login(string login, string password, bool remember)
-        {
-            return View();
-        }
+        //[HttpPost]
+        //public IActionResult Login(string login, string password, bool remember)
+        //{
+        //    return View();
+        //}
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()

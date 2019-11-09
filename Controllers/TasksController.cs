@@ -8,11 +8,9 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.Logging;
 using TasksDatabase.Models;
 using TasksDatabase.ViewModels;
 using System.Text.Json;
-using System.Text.Encodings.Web;
 
 namespace TasksDatabase.Controllers
 {
@@ -47,11 +45,10 @@ namespace TasksDatabase.Controllers
 
                 int completedCount = completedTrackingsList.Count();
 
-                var allTrackingsList = allLatestTrackingsList.Union(completedTrackingsList)  //все трекинги
-                                                             .OrderBy(t => t.Status.Id)
-                                                                 .ThenByDescending(t => t.Time)
-                                                             .Select(t => t)
-                                                             .ToList();
+                IEnumerable<Tracking> allTrackingsList = allLatestTrackingsList.Union(completedTrackingsList)  //все трекинги
+                                                                               .OrderBy(t => t.Status.Id)
+                                                                                   .ThenByDescending(t => t.Time)
+                                                                               .Select(t => t);
 
                 var totalCount = allTrackingsList.Count();
 
@@ -91,7 +88,7 @@ namespace TasksDatabase.Controllers
 
             Tracking CurrentTracking, AcceptedTracking;
             string NextStatus = "";
-            int NextStatusId;
+            //int NextStatusId;
 
             string TrackingComment = Request.Form["taskViewModel.Comment"].First().ToString();
             string NextTask = Request.Form["taskViewModel.Tracking.Id"].FirstOrDefault();
@@ -101,11 +98,12 @@ namespace TasksDatabase.Controllers
 
             using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
             {
-                var allLatestTrackingsList = db.Trackings.Join(DatabaseQueries.GetLatestTrackings(db, UserId), t => t.Id, l => l, (t, l) => t)
-                                                         .Where(t => t.User.Id == UserId)
-                                                         .Include(t => t.Status)
-                                                         .Include(t => t.Problem)
-                                                         .Select(t => t).ToList();
+                IEnumerable<Tracking> allLatestTrackingsList = db.Trackings.Join(DatabaseQueries.GetLatestTrackings(db, UserId),
+                                                                                                 t => t.Id, l => l, (t, l) => t)
+                                                                           .Where(t => t.User.Id == UserId)
+                                                                           .Include(t => t.Status)
+                                                                           .Include(t => t.Problem)
+                                                                           .Select(t => t);
 
                 if (!allLatestTrackingsList.Select(t => t.Id).Contains(CurrentTrackingId))
                 {
@@ -114,6 +112,7 @@ namespace TasksDatabase.Controllers
 
                 CurrentTracking = allLatestTrackingsList.Where(t => t.Id == CurrentTrackingId).FirstOrDefault();
 
+                //валидация входных данных
                 if (CurrentTracking == null)
                 {
                     throw new Exception("Трекинга не существует!");
@@ -144,25 +143,27 @@ namespace TasksDatabase.Controllers
                         break;
                 }
 
-                NextStatusId = db.Statuses.Where(s => s.Name == NextStatus).FirstOrDefault().Id;
+                var NextStatusId = await db.Statuses.Where(s => s.Name == NextStatus).FirstOrDefaultAsync();
 
                 AcceptedTracking = new Tracking
                 {
                     ProblemId = CurrentTracking.ProblemId,
-                    StatusId = NextStatusId,
+                    StatusId = NextStatusId.Id,
                     UserId = UserId,
                     Time = DateTime.Now,
                     Comment = TrackingComment
                 };
 
+                //задание завершено
                 if (new string[] { "Переносится", "Проверяется", "Дорабатывается", "Утверждается" }.Contains(CurrentTracking.Status.Name)
                     || CurrentTracking.Status.Name == "Не утверждён")
                 {
                     AcceptedTracking.StartTime = CurrentTracking.Time;
                 }
 
-                db.Add(AcceptedTracking);
+                await db.AddAsync(AcceptedTracking);
 
+                //нужна проверка после переноса
                 if (CurrentTracking.Status.Name == "Переносится")
                 {
                     int ToReviewStatusId = db.Statuses.Where(s => s.Name == "Не проверен").FirstOrDefault().Id;
@@ -176,9 +177,10 @@ namespace TasksDatabase.Controllers
                         Comment = TrackingComment
                     };
 
-                    db.Add(ToReviewTracking);
+                    await db.AddAsync(ToReviewTracking);
                 }
 
+                //следующее задание
                 if (new string[] { "Проверяется", "Дорабатывается" }.Contains(CurrentTracking.Status.Name))
                 {
                     string Status;
@@ -206,9 +208,10 @@ namespace TasksDatabase.Controllers
                         Comment = TrackingComment,
                     };
 
-                    db.Add(SecondTracking);
+                    await db.AddAsync(SecondTracking);
                 }
 
+                //следующее задание (после проверки админом)
                 if (CurrentTracking.Status.Name == "Не утверждён" && (NextTask == "Rework" || NextTask == "Review"))
                 {
                     string Status;
@@ -236,7 +239,7 @@ namespace TasksDatabase.Controllers
                         Comment = TrackingComment,
                     };
 
-                    db.Add(SecondTracking);
+                    await db.AddAsync(SecondTracking);
                 }
 
                 await db.SaveChangesAsync();
@@ -276,7 +279,7 @@ namespace TasksDatabase.Controllers
                                                              StartTime = t.StartTime
                                                          });
 
-                model.Json = JsonSerializer.Serialize(allTrackingsList);
+                model.Json = JsonSerializer.Serialize(allTrackingsList); //сериализуем
             }
             return View(model);
         }
