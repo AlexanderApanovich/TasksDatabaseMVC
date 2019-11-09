@@ -24,12 +24,6 @@ namespace TasksDatabase.Controllers
             _signInManager = signInManager;
         }
 
-
-        //todo убрать рекомпиляцию
-        //todo диаграмма ганта
-        //todo отчеты блоки, курсы, таски, юзеры
-
-
         [HttpGet]
         public IActionResult Add()
         {
@@ -229,19 +223,6 @@ namespace TasksDatabase.Controllers
 
                 var CurrentTaskTime = CurrentTracking.Select(t => (UserId: t.UserId, CurrentTime: (int?)(DateTime.Now - t.Time).TotalMinutes));
 
-                //foreach (var a in CurrentTaskTime)
-                //{
-                //    Console.BackgroundColor = ConsoleColor.White;
-                //    Console.ForegroundColor = ConsoleColor.Black;
-
-                //    //Console.WriteLine($"\n------------{a.ToString()}-----------------\n");
-                //    Console.WriteLine($"\n------------{a.UserId}: {a.CurrentTime}-----------------\n");
-
-                //    Console.BackgroundColor = ConsoleColor.Black;
-                //    Console.ForegroundColor = ConsoleColor.White;
-                //}
-
-
                 //получение количества выполненных заданий и общего времени на каждый тип заданий
                 var WorkDone = latestTrackingCommon.Where(t => t.StartTime != null && t.Status.Name == "Перенесён");
                 var ReviewDone = latestTrackingCommon.Where(t => t.StartTime != null && t.Status.Name == "Проверен");
@@ -254,14 +235,6 @@ namespace TasksDatabase.Controllers
                 var WorkTime = DatabaseQueries.GetTime(WorkDone);
                 var ReviewTime = DatabaseQueries.GetTime(ReviewDone);
                 var ReworkTime = DatabaseQueries.GetTime(ReworkDone);
-
-
-
-
-
-
-
-
 
                 //объединение результатов в одну таблицу
                 var UsersWithInfo = from u in UsersList
@@ -304,21 +277,6 @@ namespace TasksDatabase.Controllers
                                         ReviewTime = revt.Sum,
                                         ReworkTime = rewt.Sum,
                                     };
-
-                //foreach (var a in UsersWithInfo.ToList())
-                //{
-                //    Console.WriteLine($"------------{a.ToString()}-----------------");
-                //    Console.WriteLine($"a.CurrentTaskTime: {a.CurrentTaskTime}");
-                //    Console.WriteLine($"a.CurrentTracking: {a.CurrentTracking}");
-                //    Console.WriteLine($"a.ReviewCount: {a.ReviewCount}");
-                //    Console.WriteLine($"a.ReviewTime: {a.ReviewTime}");
-                //    Console.WriteLine($"a.ReworkCount: {a.ReworkCount}");
-                //    Console.WriteLine($"a.ReworkTime: {a.ReworkTime}");
-                //    Console.WriteLine($"a.User.UserName: {a.User.UserName}");
-                //    Console.WriteLine($"a.WorkCount: {a.WorkCount}");
-                //    Console.WriteLine($"a.WorkTime: {a.WorkTime}");
-                //    Console.WriteLine($"------------{a.ToString()}--(end)----------");
-                //}
 
                 model.UserInfos = UsersWithInfo.ToList();
 

@@ -33,7 +33,7 @@ namespace TasksDatabase
             services.AddIdentity<User, IdentityRole>()
                     .AddEntityFrameworkStores<DbContext>();
             services.AddControllersWithViews();
-            services.AddMvc().AddRazorRuntimeCompilation(); //todo: delete
+            services.AddMvc();//.AddRazorRuntimeCompilation();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

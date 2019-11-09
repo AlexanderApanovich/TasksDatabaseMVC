@@ -37,14 +37,14 @@ namespace TasksDatabase.Models
         public static List<Tracking> GetCompletedTrackings(DbContext db, string userId)
         {
             var completedTrackingsList = db.Trackings.Where(t => t.User.Id == userId && t.StartTime != null)  //трекинги завершенных заданий
-                                         .Include(t => t.Status)
-                                         .Include(t => t.User)
-                                         .Include(t => t.Problem)
-                                             .ThenInclude(t => t.Course)
-                                                 .ThenInclude(c => c.Department)
-                                         .Include(t => t.Problem)
-                                             .ThenInclude(t => t.TaskType)
-                                         .Select(t => t).ToList();
+                                                     .Include(t => t.Status)
+                                                     .Include(t => t.User)
+                                                     .Include(t => t.Problem)
+                                                         .ThenInclude(t => t.Course)
+                                                             .ThenInclude(c => c.Department)
+                                                     .Include(t => t.Problem)
+                                                         .ThenInclude(t => t.TaskType)
+                                                     .Select(t => t).ToList();
             return completedTrackingsList;
         }
 

@@ -1,8 +1,134 @@
-﻿@{
+﻿@using TasksDatabase.ViewModels;
+@model DiagramViewModel;
+@{
     ViewData["Title"] = "Home Page";
 }
 
-<p class="text-justify"><h2>Добро пожаловать в систему автоматизированной выдачи заданий</h2></p>
-<h5>
-    Пожалуйста, <a asp-area="" asp-controller="Home" asp-action="Login">войдите</a> в систему
-</h5>   
+<head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+
+        google.charts.load('current', { 'packages': ['gantt'], 'language': 'ru-Ru' });
+        google.charts.setOnLoadCallback(drawChart);
+
+        function drawChart() {
+
+            var data = new google.visualization.DataTable();
+            data.addColumn('string', 'Task ID');
+            data.addColumn('string', 'Task Name');
+            data.addColumn('string', 'Resource');
+            data.addColumn('date', 'Start Date');
+            data.addColumn('date', 'End Date');
+            data.addColumn('number', 'Duration');
+            data.addColumn('number', 'Percent Complete');
+            data.addColumn('string', 'Dependencies');
+
+            var items = @Html.Raw(Model.Json);
+
+            for (i = 0; i < items.length; i++) {
+
+                let item = items[i];
+
+                let problemType;
+                let percent;
+                let time;
+                let startTime;
+
+                if (item.StartTime) {
+                    startTime = new Date(item.StartTime);
+                    time = new Date(item.Time);
+                }
+                else {
+                    startTime = new Date(item.Time);
+                    time = new Date();
+                }
+
+                switch (String(item.Status)) {
+                    case "Перенесён":
+                        percent = 100;
+                        problemType = "Перенос";
+                        break;
+                    case "Переносится":
+                        percent = 50;
+                        problemType = "Перенос";
+                        break;
+                    case "Проверен":
+                        percent = 100;
+                        problemType = "Проверка";
+                        break;
+                    case "Проверяется":
+                        percent = 50;
+                        problemType = "Проверка";
+                        break;
+                    case "Доработан":
+                        percent = 100;
+                        problemType = "Доработка";
+                        break;
+                    case "Дорабатывается":
+                        percent = 50;
+                        problemType = "Доработка";
+                        break;
+                    case "Утверждён":
+                        percent = 100;
+                        problemType = "Утверждение";
+                        break;
+                    case "Утверждается":
+                        percent = 50;
+                        problemType = "Утверждение";
+                        break;
+                }
+
+
+                console.log("Id: " + item.Id);
+                console.log("Задание: " + item.Problem);
+                console.log("Тип: " + problemType);
+                console.log("Начало: " + startTime);
+                console.log("Конец: " + time);
+                console.log("Проценты: " + percent);
+                console.log("item.StartTime == null " + startTime);
+                console.log("А также статус: " + item.Status);
+
+                data.addRow([String(item.Id), item.Problem, problemType,
+                             startTime, time, null, percent, null]);
+
+            };
+
+            var options = {
+                height: 400,
+                gantt: {
+                    trackHeight: 30,
+                },
+            };
+
+            var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+            if (items.length > 0) {
+                chart.draw(data, options)
+            }
+            else {
+                document.getElementById("no_elements").innerHTML = "<h5>Заданий на выбранный промежуток времени нет</h5>";
+            }
+        }
+    </script>
+</head>
+<body>
+    <form>
+        <div class="form-row align-items-md-end mb-4">
+            <div class="col-auto">
+                <label asp-for="StartTime"></label>
+                <input type="date" asp-for="StartTime" class="form-control" placeholder="" />
+            </div>
+
+            <div class="col-auto">
+                <label asp-for="EndTime"></label>
+                <input type="date" asp-for="EndTime" class="form-control" />
+            </div>
+
+            <div class="col-auto">
+                <input type="submit" value="Принять" class="btn btn-success" />
+            </div>
+        </div>
+    </form>
+    <div id="chart_div"></div>
+    <div id="no_elements"></div>
+</body>

@@ -11,6 +11,8 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using TasksDatabase.Models;
 using TasksDatabase.ViewModels;
+using System.Text.Json;
+using System.Text.Encodings.Web;
 
 namespace TasksDatabase.Controllers
 {
@@ -241,6 +243,42 @@ namespace TasksDatabase.Controllers
             }
 
             return RedirectToAction("table");
+        }
+
+        public async Task<IActionResult> Diagram(DiagramViewModel model)
+        {
+            DateTime? StartTime = model.StartTime ?? DateTime.MinValue;
+            DateTime? EndTime = model.EndTime ?? DateTime.Now;
+            EndTime = EndTime.Value.AddDays(1);
+
+            using (DbContext db = new DbContext(new DbContextOptions<DbContext>()))
+            {
+                var CurrentUser = await _userManager.GetUserAsync(User);
+                string userId = CurrentUser.Id;
+
+                var allLatestTrackingsList = DatabaseQueries.GetAllLatestTrackings(db, userId);
+
+                var completedTrackingsList = DatabaseQueries.GetCompletedTrackings(db, userId);
+
+                var allTrackingsList = allLatestTrackingsList.Union(completedTrackingsList)
+                                                         .OrderBy(t => t.Status.Id)
+                                                             .ThenByDescending(t => t.Time)
+                                                         .Where(t => ((t.Time >= StartTime && t.Time <= EndTime)
+                                                                        || (t.StartTime >= StartTime && t.StartTime <= EndTime)))
+                                                         .Select(t => new
+                                                         {
+                                                             Id = t.Id,
+                                                             Problem = t.Problem.Name,
+                                                             Course = t.Problem.Course.Name,
+                                                             Status = t.Status.Name,
+                                                             Type = t.Problem.TaskType.Name,
+                                                             Time = t.Time,
+                                                             StartTime = t.StartTime
+                                                         });
+
+                model.Json = JsonSerializer.Serialize(allTrackingsList);
+            }
+            return View(model);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
